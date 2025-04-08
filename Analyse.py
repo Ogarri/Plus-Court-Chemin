@@ -39,3 +39,9 @@ if __name__ == "__main__":
     print("\nTemps d'exécution :")
     print(f"Fibonacci : {end_fibo - start_fibo:.6f} secondes")
     print(f"Min : {end_min - start_min:.6f} secondes")
+
+'''
+Analyse théorique de la complexité : Déterminez, pour chacune des implémentations,
+une borne asymptotique supérieure O du temps d’exécution en fonction du nombre de
+sommets et d’arêtes. Justifiez rigoureusement chaque étape de votre raisonnement.
+'''
