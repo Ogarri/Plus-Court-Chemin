@@ -45,3 +45,10 @@ Analyse théorique de la complexité : Déterminez, pour chacune des implémenta
 une borne asymptotique supérieure O du temps d’exécution en fonction du nombre de
 sommets et d’arêtes. Justifiez rigoureusement chaque étape de votre raisonnement.
 '''
+
+'''
+Analyse empirique : Testez les deux implémentations sur un jeu de données pertinent
+et accessible en ligne. Décrivez en détail le jeu de données utilisé et citez vos sources.
+Présentez ensuite vos résultats sous forme de graphiques, en comparant les performances
+observées aux bornes théoriques établies.
+'''
