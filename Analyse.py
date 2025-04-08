@@ -1,38 +1,45 @@
-# Création d'un graphe conséquent avec 100 sommets et des arêtes aléatoires
-import random
+import csv
 import time
 
-def generer_graphe_consequent(nombre_sommets, max_poids):
+def lire_graphe_depuis_csv(fichier_csv):
     graphe = {}
-    for i in range(1, nombre_sommets + 1):
-        sommet = f'V{i}'
-        graphe[sommet] = []
-        for _ in range(random.randint(1, 10)):  # Chaque sommet a entre 1 et 10 voisins
-            voisin = f'V{random.randint(1, nombre_sommets)}'
-            if voisin != sommet:  # Éviter les boucles
-                poids = random.randint(1, max_poids)
-                graphe[sommet].append((voisin, poids))
+    with open(fichier_csv, mode='r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            sommet = row['place1']
+            voisin = row['place2']
+            poids = float(row['mi_to_place'])
+            if sommet not in graphe:
+                graphe[sommet] = []
+            graphe[sommet].append((voisin, poids))
     return graphe
 
-# Génération d'un graphe conséquent avec 1000 sommets
-graphe_consequent = generer_graphe_consequent(1000, 20)
-
-# Sauvegarde du graphe pour les tests
 if __name__ == "__main__":
     from DijkstraFibo import dijkstra as dijkstra_fibo
     from DiijkstraMin import dijkstra as dijkstra_min
 
+    # Lecture du graphe depuis un fichier CSV
+    fichier_csv = "CSV/gaz1990placedistance100miles.csv"  # Remplacez par le chemin réel du fichier CSV
+    graphe_consequent = lire_graphe_depuis_csv(fichier_csv)
+
+    # Vérification de l'existence du sommet de départ
+    sommet_depart = 'V1'
+    if sommet_depart not in graphe_consequent:
+        print(f"Erreur : Le sommet de départ '{sommet_depart}' n'existe pas dans le graphe.")
+        sommet_depart = next(iter(graphe_consequent))  # Choisir un sommet valide par défaut
+        print(f"Utilisation du sommet '{sommet_depart}' comme sommet de départ.")
+
     # Test avec l'algorithme utilisant le tas de Fibonacci
     print("Test avec le tas de Fibonacci")
     start_fibo = time.time()
-    distances_fibo, _ = dijkstra_fibo(graphe_consequent, 'V1')
+    distances_fibo, _ = dijkstra_fibo(graphe_consequent, sommet_depart)
     print("Distances calculées (Fibonacci):", distances_fibo)
     end_fibo = time.time()
 
     # Test avec l'algorithme utilisant le tas binaire
     print("\nTest avec le tas binaire")
     start_min = time.time()
-    distances_min, _ = dijkstra_min(graphe_consequent, 'V1')
+    distances_min, _ = dijkstra_min(graphe_consequent, sommet_depart)
     print("Distances calculées (Min):", distances_min)
     end_min = time.time()
 
