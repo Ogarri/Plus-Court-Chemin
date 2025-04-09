@@ -1,6 +1,5 @@
 import math
 
-
 class TasFibonacci:
 
     class Noeud:
@@ -13,16 +12,15 @@ class TasFibonacci:
             self.marque = False
 
     def iterer(self, tete):
-        # Itération sur les nœuds d'une liste circulaire
-        noeud = arret = tete
-        flag = False
+        # Itération optimisée sur les nœuds d'une liste circulaire
+        if tete is None:
+            return
+        noeud = tete
         while True:
-            if noeud == arret and flag is True:
-                break
-            elif noeud == arret:
-                flag = True
             yield noeud
             noeud = noeud.droite
+            if noeud == tete:
+                break
 
     liste_racine, noeud_min = None, None
     total_noeuds = 0
@@ -73,17 +71,28 @@ class TasFibonacci:
 
     def fusionner(self, tas2):
         # Fusionne deux tas de Fibonacci
-        H = TasFibonacci()
-        H.liste_racine, H.noeud_min = self.liste_racine, self.noeud_min
-        dernier = tas2.liste_racine.gauche
-        tas2.liste_racine.gauche = H.liste_racine.gauche
-        H.liste_racine.gauche.droite = tas2.liste_racine
-        H.liste_racine.gauche = dernier
-        H.liste_racine.gauche.droite = H.liste_racine
-        if tas2.noeud_min.cle < H.noeud_min.cle:
-            H.noeud_min = tas2.noeud_min
-        H.total_noeuds = self.total_noeuds + tas2.total_noeuds
-        return H
+        if tas2.liste_racine is None:
+            return self
+        if self.liste_racine is None:
+            self.liste_racine = tas2.liste_racine
+            self.noeud_min = tas2.noeud_min
+            self.total_noeuds = tas2.total_noeuds
+            return self
+
+        dernier_self = self.liste_racine.gauche
+        premier_tas2 = tas2.liste_racine
+        dernier_tas2 = tas2.liste_racine.gauche
+
+        dernier_self.droite = premier_tas2
+        premier_tas2.gauche = dernier_self
+        dernier_tas2.droite = self.liste_racine
+        self.liste_racine.gauche = dernier_tas2
+
+        if tas2.noeud_min.cle < self.noeud_min.cle:
+            self.noeud_min = tas2.noeud_min
+
+        self.total_noeuds += tas2.total_noeuds
+        return self
 
     def couper(self, x, y):
         # Coupe le lien entre un nœud et son parent
@@ -105,23 +114,26 @@ class TasFibonacci:
 
     def consolider(self):
         # Consolide le tas pour réduire le nombre de racines
-        A = [None] * int(math.log(self.total_noeuds) * 2)
-        noeuds = [w for w in self.iterer(self.liste_racine)]
-        for w in range(0, len(noeuds)):
-            x = noeuds[w]
+        max_degre = int(math.log2(self.total_noeuds)) + 1
+        A = [None] * max_degre
+        noeuds = list(self.iterer(self.liste_racine))
+
+        for w in noeuds:
+            x = w
             d = x.degre
-            while A[d] != None:
+            while A[d] is not None:
                 y = A[d]
                 if x.cle > y.cle:
-                    temp = x
-                    x, y = y, temp
+                    x, y = y, x
                 self.lier(y, x)
                 A[d] = None
                 d += 1
             A[d] = x
-        for i in range(0, len(A)):
+
+        self.noeud_min = None
+        for i in range(max_degre):
             if A[i] is not None:
-                if A[i].cle < self.noeud_min.cle:
+                if self.noeud_min is None or A[i].cle < self.noeud_min.cle:
                     self.noeud_min = A[i]
 
     def lier(self, y, x):
@@ -134,14 +146,14 @@ class TasFibonacci:
         y.marque = False
 
     def fusionner_avec_liste_racine(self, noeud):
-        # Fusionne un nœud avec la liste des racines
+        # Fusion optimisée d'un nœud avec la liste des racines
         if self.liste_racine is None:
             self.liste_racine = noeud
         else:
-            noeud.droite = self.liste_racine.droite
-            noeud.gauche = self.liste_racine
-            self.liste_racine.droite.gauche = noeud
-            self.liste_racine.droite = noeud
+            noeud.droite = self.liste_racine
+            noeud.gauche = self.liste_racine.gauche
+            self.liste_racine.gauche.droite = noeud
+            self.liste_racine.gauche = noeud
 
     def fusionner_avec_liste_enfants(self, parent, noeud):
         # Fusionne un nœud avec la liste des enfants d'un parent
@@ -154,11 +166,14 @@ class TasFibonacci:
             parent.enfant.droite = noeud
 
     def retirer_de_liste_racine(self, noeud):
-        # Retire un nœud de la liste des racines
-        if noeud == self.liste_racine:
-            self.liste_racine = noeud.droite
-        noeud.gauche.droite = noeud.droite
-        noeud.droite.gauche = noeud.gauche
+        # Retrait optimisé d'un nœud de la liste des racines
+        if noeud == self.liste_racine and noeud.droite == noeud:
+            self.liste_racine = None
+        else:
+            noeud.gauche.droite = noeud.droite
+            noeud.droite.gauche = noeud.gauche
+            if noeud == self.liste_racine:
+                self.liste_racine = noeud.droite
 
     def retirer_de_liste_enfants(self, parent, noeud):
         # Retire un nœud de la liste des enfants d'un parent
