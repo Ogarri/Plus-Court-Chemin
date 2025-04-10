@@ -17,9 +17,10 @@ def lire_graphe_depuis_csv(fichier_csv):
 if __name__ == "__main__":
     from DijkstraFibo import dijkstra as dijkstra_fibo
     from DiijkstraMin import dijkstra as dijkstra_min
+    from BellmanFord import bellman_ford
 
     # Lecture du graphe depuis un fichier CSV
-    fichier_csv = "CSV/gaz1990placedistance100miles.csv"  # Remplacez par le chemin réel du fichier CSV
+    fichier_csv = "CSV/gaz1990placedistance25miles.csv"  # Remplacez par le chemin réel du fichier CSV
     graphe_consequent = lire_graphe_depuis_csv(fichier_csv)
 
     # Vérification de l'existence du sommet de départ
@@ -43,9 +44,17 @@ if __name__ == "__main__":
     print("Distances calculées (Min):", distances_min)
     end_min = time.time()
 
+    print("\nTest avec l'algorithme de Bellman-Ford")
+    start_bf = time.time()
+    distance_bellman, _ = bellman_ford(graphe_consequent, sommet_depart)
+    print("Distances calculées (Bellman-Ford):", distance_bellman)
+    end_bf = time.time()
+
+
     print("\nTemps d'exécution :")
     print(f"Fibonacci : {end_fibo - start_fibo:.6f} secondes")
     print(f"Min : {end_min - start_min:.6f} secondes")
+    print(f"Bellman-Ford : {end_bf - start_bf:.6f} secondes")
 
 '''
 Analyse théorique de la complexité : Déterminez, pour chacune des implémentations,
