@@ -11,6 +11,10 @@ class TasFibonacci:
             self.degre = 0
             self.marque = False
 
+    def __init__(self):
+        self.noeuds = []  # Initialisation de la liste des nœuds
+        self.noeud_min = None  # Référence au nœud avec la clé minimale
+
     def iterer(self, tete):
         # Itération optimisée sur les nœuds d'une liste circulaire
         if tete is None:
@@ -66,7 +70,7 @@ class TasFibonacci:
         if y is not None and x.cle < y.cle:
             self.couper(x, y)
             self.coupe_cascade(y)
-        if x.cle < self.noeud_min.cle:
+        if self.noeud_min is None or x.cle < self.noeud_min.cle:
             self.noeud_min = x
 
     def fusionner(self, tas2):
@@ -113,25 +117,32 @@ class TasFibonacci:
                 self.coupe_cascade(z)
 
     def consolider(self):
-        # Consolide le tas pour réduire le nombre de racines
-        max_degre = int(math.log2(self.total_noeuds)) + 1
-        A = [None] * max_degre
-        noeuds = list(self.iterer(self.liste_racine))
+        max_degre = 0
+        # Calculer le degré maximum possible
+        for noeud in self.noeuds:
+            max_degre = max(max_degre, noeud.degre)
 
-        for w in noeuds:
-            x = w
-            d = x.degre
+        # Ajuster la taille de A dynamiquement
+        taille_A = max_degre + 1
+        A = [None] * taille_A
+
+        for noeud in self.noeuds:
+            d = noeud.degre
+            while d >= len(A):  # Ajuster la taille si nécessaire
+                A.append(None)
             while A[d] is not None:
-                y = A[d]
-                if x.cle > y.cle:
-                    x, y = y, x
-                self.lier(y, x)
+                autre = A[d]
+                if noeud.cle > autre.cle:
+                    noeud, autre = autre, noeud
+                self.lier(autre, noeud)
                 A[d] = None
                 d += 1
-            A[d] = x
+                while d >= len(A):  # Ajuster la taille si nécessaire
+                    A.append(None)
+            A[d] = noeud
 
         self.noeud_min = None
-        for i in range(max_degre):
+        for i in range(len(A)):
             if A[i] is not None:
                 if self.noeud_min is None or A[i].cle < self.noeud_min.cle:
                     self.noeud_min = A[i]
