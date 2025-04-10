@@ -46,10 +46,13 @@ if __name__ == "__main__":
 
     print("\nTest avec l'algorithme de Bellman-Ford")
     start_bf = time.time()
-    distance_bellman, _ = bellman_ford(graphe_consequent, sommet_depart)
+    resultats_bellman = bellman_ford(graphe_consequent, sommet_depart)
+    if len(resultats_bellman) == 2:
+        distance_bellman, _ = resultats_bellman
+    else:
+        distance_bellman = resultats_bellman  # Si une seule valeur est retournée
     print("Distances calculées (Bellman-Ford):", distance_bellman)
     end_bf = time.time()
-
 
     print("\nTemps d'exécution :")
     print(f"Fibonacci : {end_fibo - start_fibo:.6f} secondes")
