@@ -59,6 +59,12 @@ if __name__ == "__main__":
     print(f"Min : {end_min - start_min:.6f} secondes")
     print(f"Bellman-Ford : {end_bf - start_bf:.6f} secondes")
 
+    # Affichage du nombre de sommets et d'arêtes
+    nombre_sommets = len(graphe_consequent)
+    nombre_aretes = sum(len(voisins) for voisins in graphe_consequent.values())
+    print(f"Nombre de sommets : {nombre_sommets}")
+    print(f"Nombre d'arêtes : {nombre_aretes}")
+
 '''
 Analyse théorique de la complexité : Déterminez, pour chacune des implémentations,
 une borne asymptotique supérieure O du temps d’exécution en fonction du nombre de
