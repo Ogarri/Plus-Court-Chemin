@@ -4,11 +4,11 @@ def generer_graphe(nb_sommets, nb_aretes, poids_min=1, poids_max=10):
     """
     Génère un graphe aléatoire représenté sous forme de dictionnaire.
 
-    :param nb_sommets: Nombre de sommets dans le graphe
-    :param nb_aretes: Nombre d'arêtes dans le graphe
-    :param poids_min: Poids minimum des arêtes
-    :param poids_max: Poids maximum des arêtes
-    :return: Un graphe sous forme de dictionnaire {sommet: [(voisin, poids), ...]}
+    param nb_sommets: Nombre de sommets dans le graphe
+    param nb_aretes: Nombre d'arêtes dans le graphe
+    param poids_min: Poids minimum des arêtes
+    param poids_max: Poids maximum des arêtes
+    return: Un graphe sous forme de dictionnaire {sommet: [(voisin, poids), ...]}
     """
     graphe = {f'V{i}': [] for i in range(1, nb_sommets + 1)}
     aretes = set()
