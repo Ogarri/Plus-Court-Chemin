@@ -1,5 +1,6 @@
 import csv
 import time
+import matplotlib.pyplot as plt  # Ajout pour les graphiques
 
 def lire_graphe_depuis_csv(fichier_csv):
     graphe = {}
@@ -64,6 +65,34 @@ if __name__ == "__main__":
     nombre_aretes = sum(len(voisins) for voisins in graphe_consequent.values())
     print(f"Nombre de sommets : {nombre_sommets}")
     print(f"Nombre d'arêtes : {nombre_aretes}")
+
+    # Données pour les graphiques
+    algorithmes = ['Fibonacci', 'Min', 'Bellman-Ford']
+    temps_execution = [end_fibo - start_fibo, end_min - start_min, end_bf - start_bf]
+
+    # Tracé des graphiques
+    plt.figure(figsize=(10, 6))
+    plt.bar(algorithmes, temps_execution, color=['blue', 'green', 'red'])
+    plt.xlabel('Algorithmes')
+    plt.ylabel('Temps d\'exécution (secondes)')
+    plt.title('Comparaison des temps d\'exécution des algorithmes')
+    plt.show()
+
+    # Exemple de borne théorique (O(n log n) pour Dijkstra avec tas de Fibonacci)
+    borne_theorique_fibo = [nombre_sommets * (nombre_aretes ** 0.5)]  # Exemple simplifié
+    borne_theorique_min = [nombre_sommets * nombre_aretes]  # Exemple simplifié
+    borne_theorique_bf = [nombre_sommets * nombre_aretes]  # Exemple simplifié
+
+    # Comparaison des performances observées avec les bornes théoriques
+    plt.figure(figsize=(10, 6))
+    plt.plot(algorithmes, temps_execution, label='Temps observés', marker='o')
+    plt.plot(algorithmes, [borne_theorique_fibo[0], borne_theorique_min[0], borne_theorique_bf[0]], 
+             label='Borne théorique', linestyle='--', marker='x')
+    plt.xlabel('Algorithmes')
+    plt.ylabel('Temps (secondes)')
+    plt.title('Comparaison des performances observées et théoriques')
+    plt.legend()
+    plt.show()
 
 '''
 Analyse théorique de la complexité : Déterminez, pour chacune des implémentations,
